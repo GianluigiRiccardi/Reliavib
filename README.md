@@ -1,5 +1,15 @@
 # ReliaVib – Smartphone-based Vibration Analysis with MATLAB
 
+![ReliaVib](https://img.shields.io/badge/ReliaVib-Predictive%20Maintenance-blue)
+![ReliaVib](https://img.shields.io/badge/ReliaVib-Smart%20Vibration%20Lab-darkorange)
+
+
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![MATLAB](https://img.shields.io/badge/MATLAB-supported-brightgreen.svg)
+![Status](https://img.shields.io/badge/status-experimental-orange.svg)
+
+---
+
 ReliaVib is a project exploring the use of **smartphones as vibration sensors** for
 predictive maintenance and condition monitoring.
 
@@ -10,11 +20,11 @@ predictive maintenance and condition monitoring.
 ---
 
 ## 🚀 Features
-- Acquire acceleration data directly from smartphone sensors
-- Save `.mat` files for reproducible experiments
-- Plot **time-domain** and **FFT** vibration data
-- Annotate and detect **controlled impacts**
-- First steps toward **alarm thresholds & anomaly detection**
+- Acquire acceleration data directly from smartphone sensors  
+- Save `.mat` files for reproducible experiments  
+- Plot **time-domain** and **FFT** vibration data  
+- Annotate and detect **controlled impacts**  
+- First steps toward **alarm thresholds & anomaly detection**  
 
 ---
 
@@ -35,9 +45,19 @@ predictive maintenance and condition monitoring.
 ---
 
 ## 📊 Example
+
 Sample from washing machine test:
 
-https://github.com/GianluigiRiccardi/Reliavib/blob/bec2025f7e3a25b9da114b5420713089732cb544/Reliavib%20P1%20.jpg
+
+
+---
+
+## 🛠️ Next steps
+Planned developments for ReliaVib:
+- Automatic alarms (RMS & peak thresholds)  
+- Anomaly detection for transient events  
+- Frequency-domain analysis aligned with ISO 10816 standards  
+- Integration with AI-driven predictive maintenance models  
 
 ---
 
@@ -52,4 +72,4 @@ https://github.com/GianluigiRiccardi/Reliavib/blob/bec2025f7e3a25b9da114b5420713
 
 ## 📝 License
 Released under the MIT License.  
-Gianluigi Riccardi
+Copyright 2025, Gianluigi Riccardi.
