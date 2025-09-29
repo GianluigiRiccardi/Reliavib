@@ -48,7 +48,7 @@ predictive maintenance and condition monitoring.
 
 Sample from washing machine test:
 
-
+![Reliavib P1](https://raw.githubusercontent.com/GianluigiRiccardi/Reliavib/bec2025f7e3a25b9da114b5420713089732cb544/Reliavib%20P1%20.jpg)
 
 ---
 
