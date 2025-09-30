@@ -1,0 +1,73 @@
+%% ReliaVib - Batch Analyzer with Peak Annotation (Mobile-Safe)
+% Author: Gianluigi Riccardi
+% Date: 2025-09-27
+% Description: Analyzes vibration data from .mat files acquired via smartphone
+% Generates: Time-domain + FFT plots with automatic saving and peak marking
+
+clear; clc;
+
+% 📁 Static list of .mat files to analyze
+files = {
+    'ReliaVib_P1_20250927_144318.mat'
+    'ReliaVib_P2_20250927_144356.mat'
+    'ReliaVib_P3_20250927_144414.mat'
+    'ReliaVib_P4_20250927_144435.mat'
+};
+
+for i = 1:length(files)
+    filename = files{i};
+    disp(['📂 Loading file: ' filename]);
+    
+    % 📥 Load data from .mat file
+    load(filename);  % should load: data, timestamps, codice, descrizione
+
+    % 🧮 Calculate vibration magnitude
+    ax = data(:,1); ay = data(:,2); az = data(:,3);
+    vib = sqrt(ax.^2 + ay.^2 + az.^2);
+
+    %% 📈 TIME DOMAIN PLOT
+    fig1 = figure('Visible','on');
+    plot(timestamps, vib, 'b');
+    title(['Vibration on ' descrizione ' (Time Domain)']);
+    xlabel('Time (s)');
+    ylabel('Acceleration (m/s^2)');
+    grid on;
+
+    % 🔴 Annotate the maximum peak
+    [peakVal, idx] = max(vib);
+    hold on;
+    plot(timestamps(idx), peakVal, 'ro', 'MarkerSize', 8, 'LineWidth', 2);
+    text(timestamps(idx), peakVal + 0.1, 'Controlled Impact', ...
+        'Color', 'red', 'FontSize', 10, 'FontWeight', 'bold');
+
+    % 💾 Save time-domain plot
+    timePlotName = ['ReliaVib_' codice '_TimeDomain_Annotated.png'];
+    saveas(fig1, timePlotName);
+    disp(['📸 Saved: ' timePlotName]);
+    close(fig1);
+
+    %% 📊 FREQUENCY DOMAIN (FFT)
+    Fs = length(timestamps) / (timestamps(end) - timestamps(1));
+    n = length(vib);
+    f = (0:n-1)*(Fs/n);
+    Y = abs(fft(vib));
+
+    fig2 = figure('Visible','on');
+    plot(f(1:floor(n/2)), Y(1:floor(n/2)), 'r');
+    title(['FFT on ' descrizione]);
+    xlabel('Frequency (Hz)');
+    ylabel('Amplitude');
+    xlim([0 100]); grid on;
+
+    % 💾 Save FFT plot
+    fftPlotName = ['ReliaVib_' codice '_FFT.png'];
+    saveas(fig2, fftPlotName);
+    disp(['📸 Saved: ' fftPlotName]);
+    close(fig2);
+
+    % ✅ Summary
+    fprintf('✅ [%s] Max Vib: %.2f m/s² at %.3f s\n\n', ...
+        codice, peakVal, timestamps(idx));
+end
+
+disp('🏁 All files analyzed and plots saved successfully.');
