@@ -1,0 +1,90 @@
+%% ReliaVib - Multipoint Vibration Test on Washing Machine (AEG 6000 Series)
+% Author: Gianluigi Riccardi
+% Project: ReliaVib - Predictive Maintenance via Smartphone
+% Date: 2025-05-02
+% Measurement Points:
+%   P1: Top panel
+%   P2: Motor side (right)
+%   P3: Front base
+%   P4: Rear drum
+
+clear; clc;
+
+% Connect to mobile device
+if ~exist('m', 'var')
+    m = mobiledev;
+end
+m.AccelerationSensorEnabled = 1;
+
+% Check sensor status
+if m.AccelerationSensorEnabled == 0
+    error('Acceleration sensor is not enabled. Please activate it and rerun the script.');
+end
+
+% Parameters
+duration = 10; % seconds per measurement
+points = {'P1', 'Top panel'; 
+          'P2', 'Motor right side';
+          'P3', 'Front base'; 
+          'P4', 'Rear drum'};
+
+logFile = 'ReliaVib_Log.csv';
+
+for i = 1:size(points,1)
+    code = points{i,1};
+    location = points{i,2};
+    input(['Place the smartphone on: ' location ' and press ENTER to start...'], 's');
+
+    disp(['Acquiring data on: ' location]);
+    m.Logging = 1;
+    pause(duration);
+    m.Logging = 0;
+    disp(['Finished acquisition on: ' location]);
+
+    % Retrieve acceleration data
+    [data, timestamps] = accellog(m);
+    ax = data(:,1); ay = data(:,2); az = data(:,3);
+    vib = sqrt(ax.^2 + ay.^2 + az.^2);
+
+    % Plot time-domain signal
+    fig1 = figure('Name',['Time Domain - ' location]);
+    tiledlayout(1,1);
+    nexttile;
+    plot(timestamps, vib, 'b');
+    title(['Vibration @ ' location ' - Time Domain']);
+    xlabel('Time (s)'); ylabel('Acceleration (m/s^2)');
+    grid on;
+
+    % Compute and plot FFT
+    Fs = length(timestamps) / (timestamps(end) - timestamps(1));
+    n = length(vib);
+    f = (0:n-1)*(Fs/n);
+    Y = abs(fft(vib));
+
+    fig2 = figure('Name',['Frequency Spectrum - ' location]);
+    tiledlayout(1,1);
+    nexttile;
+    plot(f(1:floor(n/2)), Y(1:floor(n/2)), 'r');
+    title(['FFT @ ' location]);
+    xlabel('Frequency (Hz)'); ylabel('Amplitude');
+    xlim([0 100]); grid on;
+
+    % Save .mat file
+    filename = ['ReliaVib_' code '_' datestr(now,'yyyymmdd_HHMMSS') '.mat'];
+    save(filename, 'data', 'timestamps', 'code', 'location', 'vib');
+    disp(['Data saved to: ' filename]);
+
+    % Append log entry
+    fid = fopen(logFile, 'a');
+    if fid ~= -1
+        fprintf(fid, '%s,%s,%s,%d samples\n', code, location, filename, n);
+        fclose(fid);
+    end
+
+    % Optional: export to CSV
+    % csvwrite([filename(1:end-4) '.csv'], [timestamps vib]);
+
+    close(fig1); close(fig2); % Keep the GUI clean (optional)
+end
+
+disp('✅ Multipoint test completed successfully.');
