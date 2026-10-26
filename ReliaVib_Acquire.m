@@ -1,4 +1,5 @@
-%% ReliaVib - Multipoint Vibration Test on Washing Machine (AEG 6000 Series)
+%% ReliaVib - Multipoint vibration acquisition with a smartphone (MATLAB Mobile)
+% Test case: washing machine (AEG 6000 Series)
 % Author: Gianluigi Riccardi
 % Project: ReliaVib - Predictive Maintenance via Smartphone
 % Date: 2025-05-02
@@ -55,11 +56,11 @@ for i = 1:size(points,1)
     xlabel('Time (s)'); ylabel('Acceleration (m/s^2)');
     grid on;
 
-    % Compute and plot FFT
-    Fs = length(timestamps) / (timestamps(end) - timestamps(1));
+    % Compute and plot a quick-look spectrum (mean removed to drop gravity)
+    Fs = 1 / median(diff(timestamps));
     n = length(vib);
     f = (0:n-1)*(Fs/n);
-    Y = abs(fft(vib));
+    Y = abs(fft(vib - mean(vib)));
 
     fig2 = figure('Name',['Frequency Spectrum - ' location]);
     tiledlayout(1,1);
@@ -67,7 +68,7 @@ for i = 1:size(points,1)
     plot(f(1:floor(n/2)), Y(1:floor(n/2)), 'r');
     title(['FFT @ ' location]);
     xlabel('Frequency (Hz)'); ylabel('Amplitude');
-    xlim([0 100]); grid on;
+    xlim([0 Fs/2]); grid on;
 
     % Save .mat file
     filename = ['ReliaVib_' code '_' datestr(now,'yyyymmdd_HHMMSS') '.mat'];
@@ -87,4 +88,4 @@ for i = 1:size(points,1)
     close(fig1); close(fig2); % Keep the GUI clean (optional)
 end
 
-disp('✅ Multipoint test completed successfully.');
+disp('Multipoint test completed. Run ReliaVib_Analyze.m to process the saved files.');

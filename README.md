@@ -1,75 +1,50 @@
-# ReliaVib – Smartphone-based Vibration Analysis with MATLAB
+# ReliaVib
 
-![ReliaVib](https://img.shields.io/badge/ReliaVib-Predictive%20Maintenance-blue)
-![ReliaVib](https://img.shields.io/badge/ReliaVib-Smart%20Vibration%20Lab-darkorange)
-
+**Smartphone-based vibration analysis with MATLAB: a proof of concept for low-cost condition monitoring.**
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
-![MATLAB](https://img.shields.io/badge/MATLAB-supported-brightgreen.svg)
-![Status](https://img.shields.io/badge/status-experimental-orange.svg)
+![MATLAB](https://img.shields.io/badge/MATLAB-Mobile%20%2B%20Desktop-brightgreen.svg)
+![Status](https://img.shields.io/badge/status-proof%20of%20concept-orange.svg)
 
----
+ReliaVib explores a simple question: how far can a smartphone accelerometer go as a first screening tool for rotating equipment, before a dedicated vibration analyzer is brought in? The phone records acceleration through MATLAB Mobile; MATLAB on the desktop turns the recordings into time-domain plots and amplitude spectra.
 
-ReliaVib is a project exploring the use of **smartphones as vibration sensors** for
-predictive maintenance and condition monitoring.
+The first test case is a domestic washing machine (AEG 6000 Series), measured at four points during a spin cycle. It is a controlled, repeatable source of rotating unbalance, chosen to validate the workflow before moving to industrial equipment.
 
-📱 Data acquisition via **MATLAB Mobile**  
-💻 Data analysis via **MATLAB Desktop/Online**  
-🌀 Tested on an **AEG 6000 Series washing machine (@Electrolux Group)**
+![Time signal at point P1 in MATLAB Mobile, before gravity removal](ReliaVib_P1_example.jpg)
 
----
+## What is in the repository
 
-## 🚀 Features
-- Acquire acceleration data directly from smartphone sensors  
-- Save `.mat` files for reproducible experiments  
-- Plot **time-domain** and **FFT** vibration data  
-- Annotate and detect **controlled impacts**  
-- First steps toward **alarm thresholds & anomaly detection**  
+| File | Purpose |
+|---|---|
+| `ReliaVib_Acquire.m` | Guides the user through four measurement points, records 10 s of acceleration at each one with MATLAB Mobile, shows a quick-look spectrum and saves one `.mat` file per point plus a CSV log |
+| `ReliaVib_Analyze.m` | Loads every `ReliaVib_P*.mat` file in the folder, resamples the signal on a uniform time grid, removes the gravity component and saves a time-domain plot and a single-sided amplitude spectrum for each point |
+| `ReliaVib_setup.jpg`, `ReliaVib_P1_example.jpg` | Screenshots from MATLAB Mobile: the four-point acquisition session and the raw time signal at point P1 |
 
----
+## How to use it
 
-## 📂 Repository structure
-- `acquisition/` → Scripts for mobile data acquisition  
-- `analysis/` → Scripts for visualization and FFT  
-- `examples/` → Sample `.mat` files + images  
-- `docs/` → Additional documentation and media  
+1. Install MATLAB Mobile on the smartphone and sign in with the same MathWorks account used on the desktop.
+2. Run `ReliaVib_Acquire.m` from MATLAB Mobile, place the phone on each point when prompted and press Enter to start each recording.
+3. Make the saved `.mat` files available on the desktop, for example through MATLAB Drive.
+4. Run `ReliaVib_Analyze.m` in the folder that contains the files. The plots are saved as PNG next to the data.
 
----
+## Method and limits
 
-## 🔧 How to use
-1. Install **MATLAB Mobile** on your smartphone  
-2. Run `ReliaVib_Acquire.m` to record vibrations  
-3. Transfer `.mat` files to your desktop  
-4. Run `ReliaVib_Analyze_WithAlarms.m` for plotting and anomaly detection  
+A smartphone does not sample at a perfectly constant rate, so the analysis estimates the sampling frequency from the median time step and resamples the signal on a uniform grid before the FFT. The magnitude of the acceleration vector includes gravity, about 9.81 m/s², so the mean value is removed; otherwise the spectrum would be dominated by the 0 Hz component.
 
----
+Typical smartphone accelerometers sample at about 100 Hz. By the Nyquist criterion the usable band is then limited to about 50 Hz. That covers the running speed of a washing machine drum or of many motors at low and medium speed, but not bearing defect frequencies, gear mesh or higher harmonics of a 2-pole motor. Coupling between phone and surface, sensor resolution and the lack of calibration also limit the results to comparative, qualitative screening. ReliaVib is not a replacement for a calibrated vibration analyzer or for evaluation against ISO 20816.
 
-## 📊 Example
+## Next steps
 
-Sample from washing machine test:
+Alarm levels on RMS and peak values per measurement point; trend comparison between successive recordings of the same machine; a test on industrial rotating equipment with a reference measurement from a calibrated analyzer.
 
-![Reliavib P1](https://raw.githubusercontent.com/GianluigiRiccardi/Reliavib/bec2025f7e3a25b9da114b5420713089732cb544/Reliavib%20P1%20.jpg)
+## References
 
----
+ISO 20816-1, Mechanical vibration. Measurement and evaluation of machine vibration. Part 1: General guidelines (replaces ISO 10816-1).
+C. M. Harris, A. G. Piersol, *Harris' Shock and Vibration Handbook*, McGraw-Hill.
+MathWorks, [MATLAB Mobile documentation](https://www.mathworks.com/help/matlabmobile/).
 
-## 🛠️ Next steps
-Planned developments for ReliaVib:
-- Automatic alarms (RMS & peak thresholds)  
-- Anomaly detection for transient events  
-- Frequency-domain analysis aligned with ISO 10816 standards  
-- Integration with AI-driven predictive maintenance models  
+## Author
 
----
+Gianluigi Riccardi. [Website](https://gianluigiriccardi.github.io) · [LinkedIn](https://www.linkedin.com/in/gianluigi-riccardi-ai-industrial)
 
-## 📚 References
-- ISO 10816 – Mechanical vibration — Evaluation of machine vibration  
-- Harris, C. M. *Shock and Vibration Handbook*, McGraw-Hill, 2002  
-- MATLAB Mobile – [MathWorks](https://it.mathworks.com/help/matlabmobile/)  
-- Experiment run on an iPhone – [Apple](https://www.apple.com)  
-- AEG 6000 Series – [Electrolux Group](https://www.electroluxgroup.com)  
-
----
-
-## 📝 License
-Released under the MIT License.  
-Copyright 2025, Gianluigi Riccardi.
+Released under the MIT License.
